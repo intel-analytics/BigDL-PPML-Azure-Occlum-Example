@@ -7,14 +7,12 @@ ARG HTTPS_PROXY_PORT
 ENV HTTP_PROXY=http://$HTTP_PROXY_HOST:$HTTP_PROXY_PORT
 ENV HTTPS_PROXY=http://$HTTPS_PROXY_HOST:$HTTPS_PROXY_PORT
 
-RUN mkdir -p /opt/src
-
-RUN cd /opt/src && \
+RUN mkdir -p /opt/src && \
+    cd /opt/src && \
     git clone https://github.com/qzheng527/occlum.git && \
     cd occlum && \
-    git checkout maa_init
-
-RUN apt purge libsgx-dcap-default-qpl -y
+    git checkout maa_init && \
+    apt purge libsgx-dcap-default-qpl -y
 
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list && \
     wget -qO - https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add - && \
