@@ -16,7 +16,6 @@ docker run --rm -it \
     --name=azure-ppml-example-with-occlum \
     --device=/dev/sgx/enclave \
     --device=/dev/sgx/provision \
-    -v /var/run/aesmd:/var/run/aesmd \
     intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
 ```
 
@@ -41,6 +40,13 @@ occlum run /bin/busybox cat /root/quote_base64
 ```
 
 ## Known issues
+
+- If you meet the following error when running the docker image:
+```
+aesm_service[10]: Failed to set logging callback for the quote provider library.
+aesm_service[10]: The server sock is 0x5624fe742330
+```
+This may be associated with [SGX DCAP](https://github.com/intel/linux-sgx/issues/812). And it's expected error message if not all interfaces in quote provider library are valid, and will not cause a failure.
 
 - If you meet the following error when running MAA example:
 ```
