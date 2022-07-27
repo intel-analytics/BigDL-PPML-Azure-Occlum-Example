@@ -23,3 +23,6 @@ RUN cd /opt/src/occlum && \
     git submodule update --init 
 
 ADD ./run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh
+ADD ./Cargo.toml /root/Cargo.toml 
+
+RUN cp /root/Cargo.toml /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init/Cargo.toml
