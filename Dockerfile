@@ -1,4 +1,4 @@
-FROM occlum/occlum:0.27.3-ubuntu20.04 as ppml
+FROM intelanalytics/bigdl-ppml-trusted-big-data-ml-scala-occlum:2.1.0-SNAPSHOT as ppml
 
 ARG HTTP_PROXY_HOST
 ARG HTTP_PROXY_PORT
@@ -20,6 +20,6 @@ RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod foca
     apt install az-dcap-client
 
 RUN cd /opt/src/occlum && \
-    git submodule update --init && \
-    cd demos/remote_attestation/azure_attestation/maa_init && \
-    ./build.sh
+    git submodule update --init 
+
+ADD ./run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh
