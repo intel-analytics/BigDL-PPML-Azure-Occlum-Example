@@ -9,6 +9,8 @@ HOST_IP=`cat /etc/hosts | grep $HOSTNAME | awk '{print $1}'`
 # INSTANCE_DIR="/opt/occlum_spark"
 INSTANCE_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance"
 INIT_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init"
+IMG_BOM="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/bom.yaml"
+INIT_BOM="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init_maa.yaml"
 rm -rf ${INSTANCE_DIR} && occlum new ${INSTANCE_DIR}
 
 check_sgx_dev() {
@@ -153,12 +155,14 @@ build_spark() {
     cp -f $BIGDL_HOME/jars/* image/bin/jars
     cp -rf /opt/spark-source image/opt/
 
-    cp -f /opt/occlum/toolchains/busybox/glibc/busybox image/bin 
-    cp -rf /etc/ssl initfs/etc
-    mkdir -p initfs/$occlum_glibc
-    cp -f $occlum_glibc/libnss_files.so.2 initfs/$occlum_glibc
-    cp -f $occlum_glibc/libnss_dns.so.2 initfs/$occlum_glibc
-    cp -f $occlum_glibc/libresolv.so.2 initfs/$occlum_glibc
+    # cp -f /opt/occlum/toolchains/busybox/glibc/busybox image/bin 
+    # cp -rf /etc/ssl initfs/etc
+    # mkdir -p initfs/$occlum_glibc
+    # cp -f $occlum_glibc/libnss_files.so.2 initfs/$occlum_glibc
+    # cp -f $occlum_glibc/libnss_dns.so.2 initfs/$occlum_glibc
+    # cp -f $occlum_glibc/libresolv.so.2 initfs/$occlum_glibc
+    copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
+    copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
 
     # Build
     if [[ $ATTESTATION == "true" ]]; then

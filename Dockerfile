@@ -17,7 +17,7 @@ RUN mkdir -p /opt/src && \
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list && \
     wget -qO - https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add - && \
     apt update && \
-    apt install az-dcap-client 
+    apt install az-dcap-client tree
 
 RUN cd /opt/src/occlum && \
     git submodule update --init 
