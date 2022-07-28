@@ -8,6 +8,7 @@ occlum_glibc=/opt/occlum/glibc/lib
 HOST_IP=`cat /etc/hosts | grep $HOSTNAME | awk '{print $1}'`
 # INSTANCE_DIR="/opt/occlum_spark"
 INSTANCE_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance"
+INIT_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init"
 rm -rf ${INSTANCE_DIR} && occlum new ${INSTANCE_DIR}
 
 check_sgx_dev() {
@@ -49,7 +50,7 @@ init_instance() {
     new_json="$(jq '.resource_limits.user_space_size = "SGX_MEM_SIZE" |
         .resource_limits.max_num_of_threads = "SGX_THREAD" |
         .process.default_heap_size = "SGX_HEAP" |
-        .metadata.debuggable = "ENABLE_SGX_DEBUG" |
+        .metadata.debuggable = true |
         .resource_limits.kernel_space_heap_size="SGX_KERNEL_HEAP" |
         .entry_points = [ "/usr/lib/jvm/java-8-openjdk-amd64/bin" ] |
         .env.untrusted = [ "DMLC_TRACKER_URI", "SPARK_DRIVER_URL", "SPARK_TESTING" ] |
@@ -152,6 +153,14 @@ build_spark() {
     cp -f $BIGDL_HOME/jars/* image/bin/jars
     cp -rf /opt/spark-source image/opt/
 
+    cp -f /opt/occlum/toolchains/busybox/glibc/busybox image/bin 
+    cp -f $INIT_DIR/target/release/init initfs/bin 
+    cp -rf /etc/ssl initfs/etc/ssl
+    mkdir -p initfs/$occlum_glibc
+    cp -f $occlum_glibc/libnss_files.so.2 initfs/$occlum_glibc
+    cp -f $occlum_glibc/libnss_dns.so.2 initfs/$occlum_glibc
+    cp -f $occlum_glibc/libresolv.so.2 initfs/$occlum_glibc
+
     # Build
     if [[ $ATTESTATION == "true" ]]; then
        occlum build --image-key ${INSTANCE_DIR}/data/image_key
@@ -162,34 +171,19 @@ build_spark() {
 }
 
 init_maa() {
-    cd ${INSTANCE_DIR}
-    cd ../init
-    pwd
-    occlum-cargo clean 
-    occlum-cargo build --release 
-    cd .. 
-}
-
-build_maa() {
-    cd ${INSTANCE_DIR}
-    rm -rf image 
-    copy_bom -f "/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/bom.yaml" --root image --include-dir /opt/occlum/etc/template
-
-    rm -rf initfs
-    copy_bom -f "/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init_maa.yaml" --root initfs --include-dir /opt/occlum/etc/template
-
-    mkdir -p image/$occlum_glibc
+    cd ${INIT_DIR}
+    cargo clean 
+    cargo build --release 
 }
 
 run_maa_example() {
     init_maa
     init_instance spark
-    build_maa
     build_spark    
     
     echo -e "${BLUE}occlum run MAA example${NC}"
     pwd
-    occlum run /bin/busybox cat /root/token
+    OCCLUM_LOG_LEVEL=trace occlum run /bin/busybox cat /root/token
 }
 
 build_initfs() {

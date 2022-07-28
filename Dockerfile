@@ -17,12 +17,15 @@ RUN mkdir -p /opt/src && \
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list && \
     wget -qO - https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add - && \
     apt update && \
-    apt install az-dcap-client
+    apt install az-dcap-client 
 
 RUN cd /opt/src/occlum && \
     git submodule update --init 
 
-ADD ./run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh
+RUN rm /opt/run_spark_on_occlum_glibc.sh
+
+ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
 ADD ./Cargo.toml /root/Cargo.toml 
 
-RUN cp /root/Cargo.toml /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init/Cargo.toml
+RUN cp /root/Cargo.toml /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init/Cargo.toml && \
+    cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh 
