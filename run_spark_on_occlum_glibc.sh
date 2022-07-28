@@ -154,8 +154,7 @@ build_spark() {
     cp -rf /opt/spark-source image/opt/
 
     cp -f /opt/occlum/toolchains/busybox/glibc/busybox image/bin 
-    cp -f $INIT_DIR/target/release/init initfs/bin 
-    cp -rf /etc/ssl initfs/etc/ssl
+    cp -rf /etc/ssl initfs/etc
     mkdir -p initfs/$occlum_glibc
     cp -f $occlum_glibc/libnss_files.so.2 initfs/$occlum_glibc
     cp -f $occlum_glibc/libnss_dns.so.2 initfs/$occlum_glibc
@@ -174,6 +173,9 @@ init_maa() {
     cd ${INIT_DIR}
     cargo clean 
     cargo build --release 
+    cd ${INSTANCE_DIR}
+    cp -f $INIT_DIR/target/release/init initfs/bin 
+
 }
 
 run_maa_example() {
