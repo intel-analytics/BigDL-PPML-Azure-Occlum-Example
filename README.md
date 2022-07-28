@@ -19,25 +19,26 @@ docker run --rm -it \
     intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
 ```
 
-## Spark example
-TODO
+## SparkPi example
+Run the SparkPi example with `run_spark_on_occlum_glibc.sh`.
+```bash
+cd /opt
+bash run_spark_on_occlum_glibc.sh pi
+```
 
 ## MAA example
 
 You need to set environment variable `AZDCAP_DEBUG_LOG_LEVEL` first.
 ```bash
-export AZDCAP_DEBUG_LOG_LEVEL=Fatal
+export AZDCAP_DEBUG_LOG_LEVEL=fatal
 ```
 
 Run the sample code and get the Azure attestation token for doing Microsoft Azure Attestation in Occlum.
 ```bash
-cd /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance
-occlum run /bin/busybox cat /root/token
+cd /opt
+bash run_spark_on_occlum_glibc.sh maa
 ```
-You can also get the base64 quote by the following command:
-```bash
-occlum run /bin/busybox cat /root/quote_base64
-```
+You should get the Azure attestation token when succeed.
 
 ## Known issues
 
