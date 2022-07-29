@@ -6,12 +6,11 @@ NC='\033[0m'
 occlum_glibc=/opt/occlum/glibc/lib
 # occlum-node IP
 HOST_IP=`cat /etc/hosts | grep $HOSTNAME | awk '{print $1}'`
-# INSTANCE_DIR="/opt/occlum_spark"
-INSTANCE_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance"
+INSTANCE_DIR="/opt/occlum_spark"
+# INSTANCE_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance"
 INIT_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init"
 IMG_BOM="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/bom.yaml"
 INIT_BOM="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init_maa.yaml"
-rm -rf ${INSTANCE_DIR} && occlum new ${INSTANCE_DIR}
 
 check_sgx_dev() {
     if [ -c "/dev/sgx/enclave" ]; then
@@ -40,14 +39,11 @@ check_sgx_dev() {
 init_instance() {
     # check and fix sgx device
     check_sgx_dev
-    # # Init Occlum instance
-    # cd /opt
-    # # check if occlum_spark exists
-    # [[ -d occlum_spark ]] || mkdir occlum_spark
+    # Init Occlum instance
+    cd /opt
+    # check if occlum_spark exists
+    [[ -d occlum_spark ]] || mkdir occlum_spark
     cd ${INSTANCE_DIR}
-    cd ..
-    rm -rf occlum_instance
-    mkdir occlum_instance && cd occlum_instance
     occlum init
     new_json="$(jq '.resource_limits.user_space_size = "SGX_MEM_SIZE" |
         .resource_limits.max_num_of_threads = "SGX_THREAD" |
@@ -155,12 +151,6 @@ build_spark() {
     cp -f $BIGDL_HOME/jars/* image/bin/jars
     cp -rf /opt/spark-source image/opt/
 
-    # cp -f /opt/occlum/toolchains/busybox/glibc/busybox image/bin 
-    # cp -rf /etc/ssl initfs/etc
-    # mkdir -p initfs/$occlum_glibc
-    # cp -f $occlum_glibc/libnss_files.so.2 initfs/$occlum_glibc
-    # cp -f $occlum_glibc/libnss_dns.so.2 initfs/$occlum_glibc
-    # cp -f $occlum_glibc/libresolv.so.2 initfs/$occlum_glibc
     copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
     copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
 
@@ -174,22 +164,20 @@ build_spark() {
 }
 
 init_maa() {
-    cd ${INIT_DIR}
-    cargo clean 
-    cargo build --release 
+    # cd ${INIT_DIR}
+    # cargo clean 
+    # cargo build --release 
     cd ${INSTANCE_DIR}
     cp -f $INIT_DIR/target/release/init initfs/bin 
-
 }
 
 run_maa_example() {
-    init_maa
     init_instance spark
     build_spark    
-    
+    init_maa
+    export AZDCAP_DEBUG_LOG_LEVEL=fatal
     echo -e "${BLUE}occlum run MAA example${NC}"
-    pwd
-    OCCLUM_LOG_LEVEL=trace occlum run /bin/busybox cat /root/token
+    occlum run /bin/busybox cat /root/token
 }
 
 build_initfs() {

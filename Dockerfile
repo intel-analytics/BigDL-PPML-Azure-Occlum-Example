@@ -22,10 +22,22 @@ RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod foca
 RUN cd /opt/src/occlum && \
     git submodule update --init 
 
-RUN rm /opt/run_spark_on_occlum_glibc.sh
+RUN rm /opt/run_spark_on_occlum_glibc.sh 
 
+ADD ./run_spark_pi.sh /root/k8s_spark_pi.sh
 ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
-ADD ./Cargo.toml /root/Cargo.toml 
+ADD ./entrypoint.sh /opt/occlum_spark/entrypoint.sh 
+ADD ./driver.yaml /opt/occlum_spark/driver.yaml
+ADD ./executor.yaml /opt/occlum_spark/executor.yaml
 
-RUN cp /root/Cargo.toml /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init/Cargo.toml && \
-    cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh 
+RUN cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh 
+
+RUN cd /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init && \
+    cargo clean && \
+    cargo build --release 
+
+RUN chmod a+x /opt/occlum_spark/entrypoint.sh && \
+    chmod a+x /opt/run_spark_on_occlum_glibc.sh && \
+    chmod a+x /root/run_spark_on_occlum_glibc.sh
+
+ENTRYPOINT [ "/opt/occlum_spark/entrypoint.sh" ]
