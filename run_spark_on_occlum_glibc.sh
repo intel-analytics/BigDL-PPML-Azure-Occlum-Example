@@ -154,10 +154,13 @@ build_spark() {
     cp -f $BIGDL_HOME/jars/* image/bin/jars
     cp -rf /opt/spark-source image/opt/
 
-
-
     cd ${INSTANCE_DIR}
     cp -f $INIT_DIR/target/release/init initfs/bin
+    cp -rf image/lib64 initfs/lib64 
+    cp -rf image/$occlum_glibc initfs/opt/occlum/glibc
+    cp -f /lib/x86_64-linux-gnu/libcrypto.so.1.1 initfs/$occlum_glibc/libcrypto.so.1.1
+    cp -f /lib/x86_64-linux-gnu/libgcc_s.so.1 initfs/$occlum_glibc/libgcc_s.so.1
+    cp -f /lib/x86_64-linux-gnu/libssl.so.1.1 initfs/$occlum_glibc/libssl.so.1.1
 
     # Build
     if [[ $ATTESTATION == "true" ]]; then
