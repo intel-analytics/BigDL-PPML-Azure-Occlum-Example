@@ -112,8 +112,11 @@ init_instance() {
 }
 
 build_spark() {
-    # Copy JVM and class file into Occlum instance and build
     cd ${INSTANCE_DIR}
+
+    copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
+    copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
+    # Copy JVM and class file into Occlum instance and build
     mkdir -p image/usr/lib/jvm
     cp -r /usr/lib/jvm/java-8-openjdk-amd64 image/usr/lib/jvm
     cp -rf /etc/java-8-openjdk image/etc/
@@ -151,8 +154,10 @@ build_spark() {
     cp -f $BIGDL_HOME/jars/* image/bin/jars
     cp -rf /opt/spark-source image/opt/
 
-    copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
-    copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
+
+
+    cd ${INSTANCE_DIR}
+    cp -f $INIT_DIR/target/release/init initfs/bin
 
     # Build
     if [[ $ATTESTATION == "true" ]]; then
@@ -163,18 +168,10 @@ build_spark() {
     fi
 }
 
-init_maa() {
-    # cd ${INIT_DIR}
-    # cargo clean 
-    # cargo build --release 
-    cd ${INSTANCE_DIR}
-    cp -f $INIT_DIR/target/release/init initfs/bin 
-}
-
 run_maa_example() {
     init_instance spark
     build_spark    
-    init_maa
+    
     export AZDCAP_DEBUG_LOG_LEVEL=fatal
     echo -e "${BLUE}occlum run MAA example${NC}"
     occlum run /bin/busybox cat /root/token
