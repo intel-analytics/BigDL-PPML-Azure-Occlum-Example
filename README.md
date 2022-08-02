@@ -1,8 +1,12 @@
 # Azure-PPML-Example-Occlum
 
 ## Prerequisites
-
-You can build image with `build-docker-image.sh`. Configure environment variables in `Dockerfile` and `build-docker-image.sh`.
+You can pull the image from Dockerhub.
+```bash
+docker pull xiangyut/bigdl-ppml-azure-occlum:1.2
+docker tag xiangyut/bigdl-ppml-azure-occlum:1.2 intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
+```
+Or you can build image with `build-docker-image.sh`. Configure environment variables in `Dockerfile` and `build-docker-image.sh`.
 
 Build the docker image:
 
@@ -39,6 +43,12 @@ cd /opt
 bash run_spark_on_occlum_glibc.sh maa
 ```
 You should get the Azure attestation token when succeed.
+
+## SparkPi on K8S
+Configure environment variables in `run_spark_pi.sh`, `driver.yaml` and `executor.yaml`. Then you can submit SparkPi task with `run_spark_pi.sh`.
+```bash
+bash run_spark_pi.sh
+```
 
 ## Known issues
 

@@ -6,12 +6,11 @@ NC='\033[0m'
 occlum_glibc=/opt/occlum/glibc/lib
 # occlum-node IP
 HOST_IP=`cat /etc/hosts | grep $HOSTNAME | awk '{print $1}'`
-# INSTANCE_DIR="/opt/occlum_spark"
-INSTANCE_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance"
+INSTANCE_DIR="/opt/occlum_spark"
+# INSTANCE_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/occlum_instance"
 INIT_DIR="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init"
 IMG_BOM="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/bom.yaml"
 INIT_BOM="/opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init_maa.yaml"
-rm -rf ${INSTANCE_DIR} && occlum new ${INSTANCE_DIR}
 
 check_sgx_dev() {
     if [ -c "/dev/sgx/enclave" ]; then
@@ -40,23 +39,20 @@ check_sgx_dev() {
 init_instance() {
     # check and fix sgx device
     check_sgx_dev
-    # # Init Occlum instance
-    # cd /opt
-    # # check if occlum_spark exists
-    # [[ -d occlum_spark ]] || mkdir occlum_spark
+    # Init Occlum instance
+    cd /opt
+    # check if occlum_spark exists
+    [[ -d occlum_spark ]] || mkdir occlum_spark
     cd ${INSTANCE_DIR}
-    cd ..
-    rm -rf occlum_instance
-    mkdir occlum_instance && cd occlum_instance
     occlum init
     new_json="$(jq '.resource_limits.user_space_size = "SGX_MEM_SIZE" |
         .resource_limits.max_num_of_threads = "SGX_THREAD" |
         .process.default_heap_size = "SGX_HEAP" |
         .metadata.debuggable = "ENABLE_SGX_DEBUG" |
         .resource_limits.kernel_space_heap_size="SGX_KERNEL_HEAP" |
-        .entry_points = [ "/usr/lib/jvm/java-8-openjdk-amd64/bin" ] |
+        .entry_points = [ "/bin", "/usr/lib/jvm/java-8-openjdk-amd64/bin" ] |
         .env.untrusted = [ "DMLC_TRACKER_URI", "SPARK_DRIVER_URL", "SPARK_TESTING" ] |
-        .env.default = [ "LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/lib/server:/usr/lib/jvm/java-8-openjdk-amd64/lib:/usr/lib/jvm/java-8-openjdk-amd64/../lib:/lib","SPARK_CONF_DIR=/opt/spark/conf","SPARK_ENV_LOADED=1","PYTHONHASHSEED=0","SPARK_HOME=/opt/spark","SPARK_SCALA_VERSION=2.12","SPARK_JARS_DIR=/opt/spark/jars","LAUNCH_CLASSPATH=/bin/jars/*","MAA_REPORT_DATA=BASE64_STRING","MAA_PROVIDER_URL=https://shareduks.uks.attest.azure.net","MAA_TOKEN_PATH=/root",""]' Occlum.json)" && \
+        .env.default = [ "LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/lib/server:/usr/lib/jvm/java-8-openjdk-amd64/lib:/usr/lib/jvm/java-8-openjdk-amd64/../lib:/lib","SPARK_CONF_DIR=/opt/spark/conf","SPARK_ENV_LOADED=1","PYTHONHASHSEED=0","SPARK_HOME=/opt/spark","SPARK_SCALA_VERSION=2.12","SPARK_JARS_DIR=/opt/spark/jars","LAUNCH_CLASSPATH=/bin/jars/*","MAA_REPORT_DATA=BASE64_STRING","MAA_PROVIDER_URL=https://shareduks.uks.attest.azure.net","MAA_TOKEN_PATH=/root","OCCLUM=yes",""]' Occlum.json)" && \
     echo "${new_json}" > Occlum.json
     echo "SGX_MEM_SIZE ${SGX_MEM_SIZE}"
 
@@ -116,8 +112,11 @@ init_instance() {
 }
 
 build_spark() {
-    # Copy JVM and class file into Occlum instance and build
     cd ${INSTANCE_DIR}
+
+    copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
+    copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
+    # Copy JVM and class file into Occlum instance and build
     mkdir -p image/usr/lib/jvm
     cp -r /usr/lib/jvm/java-8-openjdk-amd64 image/usr/lib/jvm
     cp -rf /etc/java-8-openjdk image/etc/
@@ -155,14 +154,13 @@ build_spark() {
     cp -f $BIGDL_HOME/jars/* image/bin/jars
     cp -rf /opt/spark-source image/opt/
 
-    # cp -f /opt/occlum/toolchains/busybox/glibc/busybox image/bin 
-    # cp -rf /etc/ssl initfs/etc
-    # mkdir -p initfs/$occlum_glibc
-    # cp -f $occlum_glibc/libnss_files.so.2 initfs/$occlum_glibc
-    # cp -f $occlum_glibc/libnss_dns.so.2 initfs/$occlum_glibc
-    # cp -f $occlum_glibc/libresolv.so.2 initfs/$occlum_glibc
-    copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
-    copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
+    cd ${INSTANCE_DIR}
+    cp -f $INIT_DIR/target/release/init initfs/bin
+    cp -rf image/lib64 initfs/lib64 
+    cp -rf image/$occlum_glibc initfs/opt/occlum/glibc
+    cp -f /lib/x86_64-linux-gnu/libcrypto.so.1.1 initfs/$occlum_glibc/libcrypto.so.1.1
+    cp -f /lib/x86_64-linux-gnu/libgcc_s.so.1 initfs/$occlum_glibc/libgcc_s.so.1
+    cp -f /lib/x86_64-linux-gnu/libssl.so.1.1 initfs/$occlum_glibc/libssl.so.1.1
 
     # Build
     if [[ $ATTESTATION == "true" ]]; then
@@ -173,23 +171,13 @@ build_spark() {
     fi
 }
 
-init_maa() {
-    cd ${INIT_DIR}
-    cargo clean 
-    cargo build --release 
-    cd ${INSTANCE_DIR}
-    cp -f $INIT_DIR/target/release/init initfs/bin 
-
-}
-
 run_maa_example() {
-    init_maa
     init_instance spark
     build_spark    
     
+    export AZDCAP_DEBUG_LOG_LEVEL=fatal
     echo -e "${BLUE}occlum run MAA example${NC}"
-    pwd
-    OCCLUM_LOG_LEVEL=trace occlum run /bin/busybox cat /root/token
+    occlum run /bin/busybox cat /root/token
 }
 
 build_initfs() {

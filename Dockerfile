@@ -25,7 +25,15 @@ RUN cd /opt/src/occlum && \
 RUN rm /opt/run_spark_on_occlum_glibc.sh
 
 ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
-ADD ./Cargo.toml /root/Cargo.toml 
 
-RUN cp /root/Cargo.toml /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init/Cargo.toml && \
-    cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh 
+RUN cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh
+
+RUN cd /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init && \
+    cargo clean && \
+    cargo build --release 
+
+RUN chmod a+x /opt/entrypoint.sh && \
+    chmod a+x /opt/run_spark_on_occlum_glibc.sh && \
+    chmod a+x /root/run_spark_on_occlum_glibc.sh
+
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
