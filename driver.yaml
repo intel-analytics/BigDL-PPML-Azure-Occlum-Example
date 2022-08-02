@@ -14,8 +14,6 @@ spec:
       mountPath: /dev/sgx/provision
     - name: aesm
       mountPath: /var/run/aesmd
-    - name: data-exchange
-      mountPath: /opt/occlum_spark/data
     securityContext:
       privileged: true
     env:
@@ -39,6 +37,3 @@ spec:
   - name: aesm
     hostPath:
       path: /var/run/aesmd
-  - name: data-exchange
-    hostPath:
-      path: /tmp
