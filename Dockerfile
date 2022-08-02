@@ -25,7 +25,6 @@ RUN cd /opt/src/occlum && \
 RUN rm /opt/run_spark_on_occlum_glibc.sh
 
 ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
-ADD ./entrypoint.sh /opt/entrypoint.sh
 
 RUN cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh
 
