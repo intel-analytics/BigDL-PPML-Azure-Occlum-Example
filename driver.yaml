@@ -25,6 +25,8 @@ spec:
       value: "1GB"
     - name: SGX_KERNEL_HEAP
       value: "1GB"
+    - name: AZDCAP_DEBUG_LOG_LEVEL
+      value: "fatal"
   volumes:
   - name: device-plugin
     hostPath:
