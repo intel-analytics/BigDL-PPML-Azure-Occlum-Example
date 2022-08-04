@@ -138,6 +138,12 @@ build_spark() {
     # Prepare Spark
     mkdir -p image/opt/spark
     cp -rf $SPARK_HOME/* image/opt/spark/
+    # Remove spark's jackson libraries and use jackson libraries in BigDL instead
+    rm -f image/opt/spark/jars/jackson-annotations* \
+     image/opt/spark/jars/jackson-core-2.* \
+     image/opt/spark/jars/jackson-databind* \
+     image/opt/spark/jars/jackson-module-scala* \
+     image/opt/spark/jars/jackson-datatype-jsr310*
     # Copy etc files
     cp -rf /etc/hosts image/etc/
     echo "$HOST_IP occlum-node" >> image/etc/hosts
