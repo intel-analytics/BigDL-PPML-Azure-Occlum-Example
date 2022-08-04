@@ -44,6 +44,12 @@ bash run_spark_on_occlum_glibc.sh maa
 ```
 You should get the Azure attestation token when succeed.
 
+## Nytaxi example
+Origin repository is https://github.com/PatrickkZ/spark-simple-query, and it's packaged as `spark-simple-query-1.0-SNAPSHOT.jar`. You can run the example with `run_simple_query.sh`.
+```bash
+bash run_simple_query.sh
+```
+
 ## SparkPi on K8S
 Configure environment variables in `run_spark_pi.sh`, `driver.yaml` and `executor.yaml`. Then you can submit SparkPi task with `run_spark_pi.sh`.
 ```bash
