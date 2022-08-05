@@ -3,8 +3,7 @@ export HTTP_PROXY_PORT=913
 export HTTPS_PROXY_HOST=child-prc.intel.com
 export HTTPS_PROXY_PORT=913
 
-git clone https://github.com/PatrickkZ/spark-simple-query.git 
-pushd spark-simple-query 
+pushd nytaxi
 mvn package 
 popd
 
