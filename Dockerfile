@@ -36,7 +36,7 @@ RUN chmod a+x /opt/entrypoint.sh && \
     chmod a+x /opt/run_spark_on_occlum_glibc.sh && \
     chmod a+x /root/run_spark_on_occlum_glibc.sh
 
-ADD ./spark-simple-query/target/spark-simple-query-1.0-SNAPSHOT.jar /root/spark-simple-query-1.0-SNAPSHOT.jar
+ADD ./nytaxi/target/spark-simple-query-1.0-SNAPSHOT.jar /root/spark-simple-query-1.0-SNAPSHOT.jar
 ADD ./run_simple_query.sh /root/run_simple_query.sh
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
