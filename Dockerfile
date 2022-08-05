@@ -22,6 +22,11 @@ RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod foca
 RUN cd /opt/src/occlum && \
     git submodule update --init 
 
+RUN wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/3.2.0/hadoop-azure-3.2.0.jar && \
+    wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure-datalake/3.2.0/hadoop-azure-datalake-3.2.0.jar && \
+    wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/7.0.0/azure-storage-7.0.0.jar && \
+    wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/com/microsoft/azure/azure-data-lake-store-sdk/2.2.9/azure-data-lake-store-sdk-2.2.9.jar
+
 RUN rm /opt/run_spark_on_occlum_glibc.sh
 
 ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
