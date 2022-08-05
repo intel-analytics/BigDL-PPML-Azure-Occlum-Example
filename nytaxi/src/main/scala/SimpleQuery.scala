@@ -4,7 +4,6 @@ import org.apache.spark.sql.SparkSession
 
 object SimpleQuery {
   val spark: SparkSession = SparkSession.builder()
-    .master("local[1]")
     .appName("simple-query")
     .getOrCreate()
 
@@ -15,12 +14,12 @@ object SimpleQuery {
     val blobSasToken = sys.env.getOrElse("AZURE_BLOB_SAS_TOKEN", "")
     val azureSqlAeJdbc = sys.env.getOrElse("AZURE_SQL_AE_JDBC", "")
 
-
     println("########################################")
     println("############### COUNT * ################")
     println("########################################")
     val startTime = new Date().getTime
-    val path = FileGenerator.getClass.getResource("").getPath + "people.parquet"
+    val path = "wasbs://%s@%s.blob.core.windows.net/%s".format(blobContainerName, blobAccountName, blobRelativePath)
+    spark.conf.set("fs.azure.sas.%s.%s.blob.core.windows.net".format(blobContainerName, blobAccountName), blobSasToken)
     val parquetDF = spark.read.parquet(path)
     println("Input DataFrame Count: " + parquetDF.count())
     val endTime = new Date().getTime
