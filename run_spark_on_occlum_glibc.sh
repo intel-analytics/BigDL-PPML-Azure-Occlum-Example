@@ -52,7 +52,7 @@ init_instance() {
         .resource_limits.kernel_space_heap_size="SGX_KERNEL_HEAP" |
         .entry_points = [ "/bin", "/usr/lib/jvm/java-8-openjdk-amd64/bin" ] |
         .env.untrusted = [ "DMLC_TRACKER_URI", "SPARK_DRIVER_URL", "SPARK_TESTING" ] |
-        .env.default = [ "LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/lib/server:/usr/lib/jvm/java-8-openjdk-amd64/lib:/usr/lib/jvm/java-8-openjdk-amd64/../lib:/lib","SPARK_CONF_DIR=/opt/spark/conf","SPARK_ENV_LOADED=1","PYTHONHASHSEED=0","SPARK_HOME=/opt/spark","SPARK_SCALA_VERSION=2.12","SPARK_JARS_DIR=/opt/spark/jars","LAUNCH_CLASSPATH=/bin/jars/*","MAA_REPORT_DATA=BASE64_STRING","MAA_PROVIDER_URL=https://shareduks.uks.attest.azure.net","MAA_TOKEN_PATH=/root","OCCLUM=yes",""]' Occlum.json)" && \
+        .env.default = [ "LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/lib/server:/usr/lib/jvm/java-8-openjdk-amd64/lib:/usr/lib/jvm/java-8-openjdk-amd64/../lib:/lib","SPARK_CONF_DIR=/opt/spark/conf","SPARK_ENV_LOADED=1","PYTHONHASHSEED=0","SPARK_HOME=/opt/spark","SPARK_SCALA_VERSION=2.12","SPARK_JARS_DIR=/opt/spark/jars","LAUNCH_CLASSPATH=/bin/jars/*","MAA_REPORT_DATA=BASE64_STRING","MAA_PROVIDER_URL=https://shareduks.uks.attest.azure.net","MAA_TOKEN_PATH=/root","OCCLUM=yes","AZURE_BLOB_ACCOUNT_NAME=azureopendatastorage","AZURE_BLOB_CONTAINER_NAME=nyctlc","AZURE_BLOB_SAS_TOKEN=r","AZURE_BLOB_RELATIVE_PATH=yellow","AZURE_SQL_AE_JDBC="]' Occlum.json)" && \
     echo "${new_json}" > Occlum.json
     echo "SGX_MEM_SIZE ${SGX_MEM_SIZE}"
 
