@@ -3,8 +3,7 @@
 ## Prerequisites
 You can pull the image from Dockerhub.
 ```bash
-docker pull xiangyut/bigdl-ppml-azure-occlum:1.5
-docker tag xiangyut/bigdl-ppml-azure-occlum:1.5 intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
+docker pull intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
 ```
 Or you can build image with `build-docker-image.sh`. Configure environment variables in `Dockerfile` and `build-docker-image.sh`.
 
