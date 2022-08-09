@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ${SPARK_HOME}/bin/spark-submit \
-    --master k8s://https://${kubernetes_master_url}:6443 \
+    --master k8s://https://${kubernetes_master_url}:${k8s_apiserver_port} \
     --deploy-mode cluster \
     --name spark-pi \
     --class org.apache.spark.examples.SparkPi \

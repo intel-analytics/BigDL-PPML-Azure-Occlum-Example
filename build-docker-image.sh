@@ -1,7 +1,7 @@
-export HTTP_PROXY_HOST=child-prc.intel.com
-export HTTP_PROXY_PORT=913
-export HTTPS_PROXY_HOST=child-prc.intel.com
-export HTTPS_PROXY_PORT=913
+export HTTP_PROXY_HOST=your_http_proxy_host
+export HTTP_PROXY_PORT=your_http_proxy_port
+export HTTPS_PROXY_HOST=your_https_proxy_host
+export HTTPS_PROXY_PORT=your_https_proxy_port
 export AZURE_BLOB_ACCOUNT_NAME=azureopendatastorage
 export AZURE_BLOB_CONTAINER_NAME=nyctlc
 export AZURE_BLOB_RELATIVE_PATH=yellow
