@@ -26,6 +26,12 @@ docker run --rm -it \
 ## Nytaxi example
 Run the Nytaxi example with `run_simple_query.sh`.
 ```bash
+docker run --rm -it \
+    --name=azure-ppml-example-with-occlum \
+    --device=/dev/sgx/enclave \
+    --device=/dev/sgx/provision \
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+
 bash run_simple_query.sh
 ```
 You should get Nytaxi dataframe count and aggregation duration when succeed.
@@ -39,6 +45,12 @@ bash run_nytaxi_k8s.sh
 ## SparkPi example
 Run the SparkPi example with `run_spark_on_occlum_glibc.sh`.
 ```bash
+docker run --rm -it \
+    --name=azure-ppml-example-with-occlum \
+    --device=/dev/sgx/enclave \
+    --device=/dev/sgx/provision \
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+
 cd /opt
 bash run_spark_on_occlum_glibc.sh pi
 ```
@@ -47,6 +59,12 @@ bash run_spark_on_occlum_glibc.sh pi
 
 You need to set environment variable `AZDCAP_DEBUG_LOG_LEVEL` first.
 ```bash
+docker run --rm -it \
+    --name=azure-ppml-example-with-occlum \
+    --device=/dev/sgx/enclave \
+    --device=/dev/sgx/provision \
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+
 export AZDCAP_DEBUG_LOG_LEVEL=fatal
 ```
 
