@@ -3,8 +3,8 @@
 ## Prerequisites
 You can pull the image from Dockerhub.
 ```bash
-docker pull xiangyut/bigdl-ppml-azure-occlum:1.4
-docker tag xiangyut/bigdl-ppml-azure-occlum:1.4 intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
+docker pull xiangyut/bigdl-ppml-azure-occlum:1.5
+docker tag xiangyut/bigdl-ppml-azure-occlum:1.5 intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
 ```
 Or you can build image with `build-docker-image.sh`. Configure environment variables in `Dockerfile` and `build-docker-image.sh`.
 
@@ -23,9 +23,34 @@ docker run --rm -it \
     intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
 ```
 
+## Nytaxi example
+Run the Nytaxi example with `run_simple_query.sh`.
+```bash
+docker run --rm -it \
+    --name=azure-ppml-example-with-occlum \
+    --device=/dev/sgx/enclave \
+    --device=/dev/sgx/provision \
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+
+bash run_simple_query.sh
+```
+You should get Nytaxi dataframe count and aggregation duration when succeed.
+
+## Nytaxi on Kubernetes
+Configure environment variables in `run_nytaxi_k8s.sh`, `driver.yaml` and `executor.yaml`. Then you can submit Nytaxi query task with `run_nytaxi_k8s.sh`.
+```bash
+bash run_nytaxi_k8s.sh
+```
+
 ## SparkPi example
 Run the SparkPi example with `run_spark_on_occlum_glibc.sh`.
 ```bash
+docker run --rm -it \
+    --name=azure-ppml-example-with-occlum \
+    --device=/dev/sgx/enclave \
+    --device=/dev/sgx/provision \
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+
 cd /opt
 bash run_spark_on_occlum_glibc.sh pi
 ```
@@ -34,6 +59,12 @@ bash run_spark_on_occlum_glibc.sh pi
 
 You need to set environment variable `AZDCAP_DEBUG_LOG_LEVEL` first.
 ```bash
+docker run --rm -it \
+    --name=azure-ppml-example-with-occlum \
+    --device=/dev/sgx/enclave \
+    --device=/dev/sgx/provision \
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+
 export AZDCAP_DEBUG_LOG_LEVEL=fatal
 ```
 
@@ -44,13 +75,7 @@ bash run_spark_on_occlum_glibc.sh maa
 ```
 You should get the Azure attestation token when succeed.
 
-## Nytaxi example
-Origin repository is https://github.com/PatrickkZ/spark-simple-query, and it's packaged as `spark-simple-query-1.0-SNAPSHOT.jar`. You can run the example with `run_simple_query.sh`.
-```bash
-bash run_simple_query.sh
-```
-
-## SparkPi on K8S
+## SparkPi on Kubernetes
 Configure environment variables in `run_spark_pi.sh`, `driver.yaml` and `executor.yaml`. Then you can submit SparkPi task with `run_spark_pi.sh`.
 ```bash
 bash run_spark_pi.sh
