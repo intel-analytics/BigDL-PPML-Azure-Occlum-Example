@@ -18,6 +18,8 @@ ENV AZURE_BLOB_RELATIVE_PATH=$AZURE_BLOB_RELATIVE_PATH
 ENV AZURE_BLOB_SAS_TOKEN=$AZURE_BLOB_SAS_TOKEN
 ENV AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC
 
+ENV AZDCAP_DEBUG_LOG_LEVEL=fatal
+
 RUN mkdir -p /opt/src && \
     cd /opt/src && \
     git clone https://github.com/qzheng527/occlum.git && \

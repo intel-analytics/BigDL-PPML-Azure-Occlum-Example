@@ -109,6 +109,7 @@ init_instance() {
     openssl genrsa -out key.pem 2048
     report_data=$(base64 -w 0 key.pem)
     sed -i "s/BASE64_STRING/$report_data/g" Occlum.json
+    cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "ramfs"}]'
 }
 
 build_spark() {
@@ -181,7 +182,6 @@ run_maa_example() {
     init_instance spark
     build_spark    
     
-    export AZDCAP_DEBUG_LOG_LEVEL=fatal
     echo -e "${BLUE}occlum run MAA example${NC}"
     occlum run /bin/busybox cat /root/token
 }
