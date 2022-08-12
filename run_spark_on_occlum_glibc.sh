@@ -109,7 +109,8 @@ init_instance() {
     openssl genrsa -out key.pem 2048
     report_data=$(base64 -w 0 key.pem)
     sed -i "s/BASE64_STRING/$report_data/g" Occlum.json
-    cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "ramfs"}]'
+    edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "ramfs"}]')" && \
+    echo "${edit_json}" > Occlum.json
 }
 
 build_spark() {
