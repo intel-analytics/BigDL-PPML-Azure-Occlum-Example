@@ -15,8 +15,6 @@ spec:
     securityContext:
       privileged: true
     env:
-    - name: EXECUTOR_CORES
-      value: "4"
     - name: EXECUTOR_MEMORY
       value: "512m"
     - name: NETTY_THREAD

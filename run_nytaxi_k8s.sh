@@ -5,6 +5,8 @@ ${SPARK_HOME}/bin/spark-submit \
     --deploy-mode cluster \
     --name spark-nytaxi \
     --class SimpleQuery \
+    --driver-cores 4 \
+    --executor-cores 4 \
     --conf spark.executor.instances=1 \
     --conf spark.rpc.netty.dispatcher.numThreads=32 \
     --conf spark.kubernetes.container.image=intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT \

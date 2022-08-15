@@ -15,8 +15,6 @@ spec:
     securityContext:
       privileged: true
     env:
-    - name: DRIVER_CORES
-      value: "4"
     - name: DRIVER_MEMORY
       value: "512m"
     - name: SGX_MEM_SIZE

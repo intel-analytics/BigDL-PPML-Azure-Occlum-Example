@@ -160,7 +160,6 @@ build_spark() {
     # Prepare BigDL
     mkdir -p image/bin/jars
     cp -f $BIGDL_HOME/jars/* image/bin/jars
-    cp -rf /opt/spark-source image/opt/
 
     cd ${INSTANCE_DIR}
     cp -f $INIT_DIR/target/release/init initfs/bin
