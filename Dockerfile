@@ -18,6 +18,8 @@ ENV AZURE_BLOB_RELATIVE_PATH=$AZURE_BLOB_RELATIVE_PATH
 ENV AZURE_BLOB_SAS_TOKEN=$AZURE_BLOB_SAS_TOKEN
 ENV AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC
 
+ENV AZDCAP_DEBUG_LOG_LEVEL=fatal
+
 RUN mkdir -p /opt/src && \
     cd /opt/src && \
     git clone https://github.com/qzheng527/occlum.git && \
@@ -41,7 +43,8 @@ RUN wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/apache/hadoop/ha
     wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/9.3.24.v20180605/jetty-util-9.3.24.v20180605.jar && \
     wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/wildfly/openssl/wildfly-openssl/1.0.7.Final/wildfly-openssl-1.0.7.Final.jar
 
-RUN rm /opt/run_spark_on_occlum_glibc.sh
+RUN rm /opt/run_spark_on_occlum_glibc.sh && \
+    rm -rf /opt/spark-source
 
 ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
 

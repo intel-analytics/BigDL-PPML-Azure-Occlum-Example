@@ -109,6 +109,8 @@ init_instance() {
     openssl genrsa -out key.pem 2048
     report_data=$(base64 -w 0 key.pem)
     sed -i "s/BASE64_STRING/$report_data/g" Occlum.json
+    edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "ramfs"}]')" && \
+    echo "${edit_json}" > Occlum.json
 }
 
 build_spark() {
@@ -158,7 +160,6 @@ build_spark() {
     # Prepare BigDL
     mkdir -p image/bin/jars
     cp -f $BIGDL_HOME/jars/* image/bin/jars
-    cp -rf /opt/spark-source image/opt/
 
     cd ${INSTANCE_DIR}
     cp -f $INIT_DIR/target/release/init initfs/bin
@@ -181,7 +182,6 @@ run_maa_example() {
     init_instance spark
     build_spark    
     
-    export AZDCAP_DEBUG_LOG_LEVEL=fatal
     echo -e "${BLUE}occlum run MAA example${NC}"
     occlum run /bin/busybox cat /root/token
 }
