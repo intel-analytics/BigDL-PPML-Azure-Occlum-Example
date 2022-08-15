@@ -8,7 +8,7 @@ ${SPARK_HOME}/bin/spark-submit \
     --driver-cores 4 \
     --executor-cores 4 \
     --conf spark.executor.instances=1 \
-    --conf spark.rpc.netty.dispatcher.numThreads=32 \
+    --conf spark.rpc.netty.dispatcher.numThreads=128 \
     --conf spark.kubernetes.container.image=intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
     --conf spark.kubernetes.executor.deleteOnTermination=false \
