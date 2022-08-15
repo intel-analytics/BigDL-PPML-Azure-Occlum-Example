@@ -15,14 +15,12 @@ spec:
     securityContext:
       privileged: true
     env:
-    - name: EXECUTOR_CORES
-      value: "4"
     - name: EXECUTOR_MEMORY
       value: "512m"
     - name: NETTY_THREAD
       value: "32"
     - name: SGX_MEM_SIZE
-      value: "32GB"
+      value: "8GB"
     - name: SGX_THREAD
       value: "256"
     - name: SGX_HEAP
