@@ -1,11 +1,28 @@
-# Azure-PPML-Example-Occlum
+# BigDL-PPML-Azure-Occlum-Example
+
+## Overview
+
+This repository demonstrates how to run standard Apache Spark applications with BigDL PPML and Occlum on Azure Intel SGX enabled Confidential Virtual machines ([DCsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/dcv3-series) or [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/services/kubernetes-service/)). These Azure Virtual Machines include the Intel SGX extensions.
+
+Key points:
+
+* Azure DC Series: We run distributed Spark 3.1.2 examples, on an Azure DCsv3 machine running Docker. These machines are backed by the 3rd generation Intel Xeon Scalabe Processor with large Encrypted Page Cache (EPC) memory. 
+* Occlum: To run Spark inside an Intel SGX enclave - we leverage Occlum, who have essentially taken the Open Source Spark code, and wrapped it with their enclave runtime so that Spark can run inside SGX enclaves (a task that requires deep knowledge of the SGX ecosystem - something Occlum is an expert at).
 
 ## Prerequisites
-You can pull the image from Dockerhub.
+
+* Set up Azure VM on Azure
+    * [DCsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/dcv3-series) for [single node spark example](#single-node-spark-examples-on-azure).
+    * [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/services/kubernetes-service/) for [distributed Spark examples](#distributed-spark-example-on-aks).
+* Prepare image of Spark
+
+Pull the image from [Dockerhub](https://hub.docker.com/r/intelanalytics/bigdl-ppml-azure-occlum).
+
 ```bash
 docker pull intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
 ```
-Or you can build image with `build-docker-image.sh`. Configure environment variables in `Dockerfile` and `build-docker-image.sh`.
+
+Or you can build image with `build-docker-image.sh`. Configure environment variables in `build-docker-image.sh`.
 
 Build the docker image:
 
@@ -13,36 +30,12 @@ Build the docker image:
 bash build-docker-image.sh
 ```
 
-## Run docker
-```bash
-docker run --rm -it \
-    --name=azure-ppml-example-with-occlum \
-    --device=/dev/sgx/enclave \
-    --device=/dev/sgx/provision \
-    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
-```
-
-## Nytaxi example
-Run the Nytaxi example with `run_simple_query.sh`.
-```bash
-docker run --rm -it \
-    --name=azure-ppml-example-with-occlum \
-    --device=/dev/sgx/enclave \
-    --device=/dev/sgx/provision \
-    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
-
-bash run_simple_query.sh
-```
-You should get Nytaxi dataframe count and aggregation duration when succeed.
-
-## Nytaxi on Kubernetes
-Configure environment variables in `run_nytaxi_k8s.sh`, `driver.yaml` and `executor.yaml`. Then you can submit Nytaxi query task with `run_nytaxi_k8s.sh`.
-```bash
-bash run_nytaxi_k8s.sh
-```
+## Single Node Spark Examples on Azure
 
 ## SparkPi example
+
 Run the SparkPi example with `run_spark_on_occlum_glibc.sh`.
+
 ```bash
 docker run --rm -it \
     --name=azure-ppml-example-with-occlum \
@@ -54,9 +47,10 @@ cd /opt
 bash run_spark_on_occlum_glibc.sh pi
 ```
 
-## MAA example
+### Nytaxi example
 
-You need to set environment variable `AZDCAP_DEBUG_LOG_LEVEL` first.
+Run the Nytaxi example with `run_simple_query.sh`.
+
 ```bash
 docker run --rm -it \
     --name=azure-ppml-example-with-occlum \
@@ -64,33 +58,42 @@ docker run --rm -it \
     --device=/dev/sgx/provision \
     intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
 
-export AZDCAP_DEBUG_LOG_LEVEL=fatal
+bash run_simple_query.sh
 ```
 
-Run the sample code and get the Azure attestation token for doing Microsoft Azure Attestation in Occlum.
-```bash
-cd /opt
-bash run_spark_on_occlum_glibc.sh maa
-```
-You should get the Azure attestation token when succeed.
+You should get Nytaxi dataframe count and aggregation duration when succeed.
 
-## SparkPi on Kubernetes
+## Distributed Spark Example on AKS
+
+### SparkPi on AKS
 Configure environment variables in `run_spark_pi.sh`, `driver.yaml` and `executor.yaml`. Then you can submit SparkPi task with `run_spark_pi.sh`.
 ```bash
 bash run_spark_pi.sh
 ```
 
+### Nytaxi on AKS
+
+Configure environment variables in `run_nytaxi_k8s.sh`, `driver.yaml` and `executor.yaml`. Then you can submit Nytaxi query task with `run_nytaxi_k8s.sh`.
+```bash
+bash run_nytaxi_k8s.sh
+```
+
+
+
 ## Known issues
 
-- If you meet the following error when running the docker image:
-```
+1. If you meet the following error when running the docker image:
+
+```bash
 aesm_service[10]: Failed to set logging callback for the quote provider library.
 aesm_service[10]: The server sock is 0x5624fe742330
 ```
+
 This may be associated with [SGX DCAP](https://github.com/intel/linux-sgx/issues/812). And it's expected error message if not all interfaces in quote provider library are valid, and will not cause a failure.
 
-- If you meet the following error when running MAA example:
-```
+2. If you meet the following error when running MAA example:
+
+```bash
 [get_platform_quote_cert_data ../qe_logic.cpp:352] p_sgx_get_quote_config returned NULL for p_pck_cert_config.
 thread 'main' panicked at 'IOCTRL IOCTL_GET_DCAP_QUOTE_SIZE failed', /opt/src/occlum/tools/toolchains/dcap_lib/src/occlum_dcap.rs:70:13
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
@@ -99,4 +102,12 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 [ERROR] occlum-pal: Failed to do ECall: occlum_ecall_broadcast_interrupts with error code 0x2002: Invalid enclave identification. (line 26, file src/pal_interrupt_thread.c)
 /opt/occlum/build/bin/occlum: line 337:  3004 Segmentation fault      (core dumped) RUST_BACKTRACE=1 "$instance_dir/build/bin/occlum-run" "$@"
 ```
+
 This may be associated with [[RFC] IOCTRL IOCTL_GET_DCAP_QUOTE_SIZE failed](https://github.com/occlum/occlum/issues/899).
+
+## Reference
+
+BigDL
+Occlum
+Intel SGX
+Confidential Data Analytics with Apache Spark on Intel SGX Confidential Containers
