@@ -11,7 +11,7 @@ Key points:
 
 ![Distributed Spark in SGX on Azure](images/spark_sgx_azure.png)
 
-<img src=images/occlum_maa.png width="400">
+<img src=images/occlum_maa.png width="600">
 
 ## Prerequisites
 
