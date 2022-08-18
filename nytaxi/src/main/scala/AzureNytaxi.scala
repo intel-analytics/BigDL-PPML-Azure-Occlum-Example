@@ -2,9 +2,9 @@ import java.util.Date
 
 import org.apache.spark.sql.SparkSession
 
-object SimpleQuery {
+object AzureNytaxi {
   val spark: SparkSession = SparkSession.builder()
-    .appName("simple-query")
+    .appName("azure-nytaxi")
     .getOrCreate()
 
   def main(args: Array[String]): Unit = {

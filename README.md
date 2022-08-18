@@ -52,7 +52,7 @@ bash run_spark_on_occlum_glibc.sh pi
 
 ### Nytaxi example with Azure NYTaxi
 
-Run the Nytaxi example with `run_simple_query.sh`.
+Run the Nytaxi example with `run_azure_nytaxi.sh`.
 
 ```bash
 docker run --rm -it \
@@ -61,7 +61,7 @@ docker run --rm -it \
     --device=/dev/sgx/provision \
     intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
 
-bash run_simple_query.sh
+bash run_azure_nytaxi.sh
 ```
 
 You should get Nytaxi dataframe count and aggregation duration when succeed.
