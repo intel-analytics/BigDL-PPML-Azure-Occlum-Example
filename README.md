@@ -9,6 +9,10 @@ Key points:
 * Azure DC Series: We run distributed Spark 3.1.2 examples, on an Azure DCsv3 machine running Docker. These machines are backed by the 3rd generation Intel Xeon Scalabe Processor with large Encrypted Page Cache (EPC) memory. 
 * Occlum: To run Spark inside an Intel SGX enclave - we leverage Occlum, who have essentially taken the Open Source Spark code, and wrapped it with their enclave runtime so that Spark can run inside SGX enclaves (a task that requires deep knowledge of the SGX ecosystem - something Occlum is an expert at).
 
+![Attestation Occlum](images/occlum_maa.png)
+
+![Distributed Spark in SGX on Azure](images/spark_sgx_azure.png)
+
 ## Prerequisites
 
 * Set up Azure VM on Azure
@@ -35,7 +39,7 @@ bash build-docker-image.sh
 
 Single node Spark Examples require 1 Azure VM with SGX. All examples are running in SGX. You can apply it to your application with a few changes in dockerfile or scripts.
 
-## SparkPi example
+### SparkPi example
 
 Run the SparkPi example with `run_spark_on_occlum_glibc.sh`.
 
