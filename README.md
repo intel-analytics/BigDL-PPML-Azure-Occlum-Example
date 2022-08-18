@@ -15,6 +15,7 @@ Key points:
     * [DCsv3](https://docs.microsoft.com/en-us/azure/virtual-machines/dcv3-series) for [single node spark example](#single-node-spark-examples-on-azure).
     * [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/services/kubernetes-service/) for [distributed Spark examples](#distributed-spark-example-on-aks).
 * Prepare image of Spark
+* (Required for distributed Spark examples only) Download [Spark 3.1.2](https://archive.apache.org/dist/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz) and extract Spark binary. Install OpenJDK-8, and `export SPARK_HOME=${Spark_Binary_dir}`.
 
 Pull the image from [Dockerhub](https://hub.docker.com/r/intelanalytics/bigdl-ppml-azure-occlum).
 
@@ -22,7 +23,7 @@ Pull the image from [Dockerhub](https://hub.docker.com/r/intelanalytics/bigdl-pp
 docker pull intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
 ```
 
-Or you can build image with `build-docker-image.sh`. Configure environment variables in `build-docker-image.sh`.
+Or you can clone this repository and build image with `build-docker-image.sh`. Configure environment variables in `build-docker-image.sh`.
 
 Build the docker image:
 
@@ -31,6 +32,8 @@ bash build-docker-image.sh
 ```
 
 ## Single Node Spark Examples on Azure
+
+Single node Spark Examples require 1 Azure VM with SGX. All examples are running in SGX. You can apply it to your application with a few changes in dockerfile or scripts.
 
 ## SparkPi example
 
@@ -47,7 +50,7 @@ cd /opt
 bash run_spark_on_occlum_glibc.sh pi
 ```
 
-### Nytaxi example
+### Nytaxi example with Azure NYTaxi
 
 Run the Nytaxi example with `run_simple_query.sh`.
 
@@ -63,10 +66,12 @@ bash run_simple_query.sh
 
 You should get Nytaxi dataframe count and aggregation duration when succeed.
 
-## Distributed Spark Example on AKS
+## Distributed Spark Examples on AKS
 
 ### SparkPi on AKS
+
 Configure environment variables in `run_spark_pi.sh`, `driver.yaml` and `executor.yaml`. Then you can submit SparkPi task with `run_spark_pi.sh`.
+
 ```bash
 bash run_spark_pi.sh
 ```
@@ -77,8 +82,6 @@ Configure environment variables in `run_nytaxi_k8s.sh`, `driver.yaml` and `execu
 ```bash
 bash run_nytaxi_k8s.sh
 ```
-
-
 
 ## Known issues
 
@@ -107,7 +110,7 @@ This may be associated with [[RFC] IOCTRL IOCTL_GET_DCAP_QUOTE_SIZE failed](http
 
 ## Reference
 
-BigDL
-Occlum
-Intel SGX
-Confidential Data Analytics with Apache Spark on Intel SGX Confidential Containers
+1. https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html
+2. https://github.com/intel-analytics/BigDL
+3. https://github.com/occlum/occlum
+4. [Confidential Data Analytics with Apache Spark on Intel SGX Confidential Containers](https://github.com/Azure-Samples/confidential-container-samples/blob/main/confidential-big-data-spark/README.md)
