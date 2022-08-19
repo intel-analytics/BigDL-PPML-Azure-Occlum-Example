@@ -13,6 +13,8 @@ Key points:
 
 <p align="center"> <img src=images/occlum_maa.png width="600"></p>
 
+* For Azure attestation details in Occlum init process please refer to [`maa_init`](https://github.com/occlum/occlum/tree/master/demos/remote_attestation/azure_attestation/maa_init).
+
 ## Prerequisites
 
 * Set up Azure VM on Azure

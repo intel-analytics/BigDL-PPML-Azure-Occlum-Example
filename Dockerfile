@@ -22,9 +22,8 @@ ENV AZDCAP_DEBUG_LOG_LEVEL=fatal
 
 RUN mkdir -p /opt/src && \
     cd /opt/src && \
-    git clone https://github.com/qzheng527/occlum.git && \
+    git clone https://github.com/occlum/occlum.git && \
     cd occlum && \
-    git checkout maa_init && \
     apt purge libsgx-dcap-default-qpl -y
 
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" | sudo tee /etc/apt/sources.list.d/msprod.list && \
