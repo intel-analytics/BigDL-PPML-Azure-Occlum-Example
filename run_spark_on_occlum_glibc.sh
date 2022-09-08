@@ -110,10 +110,10 @@ init_instance() {
     report_data=$(base64 -w 0 key.pem)
     sed -i "s/BASE64_STRING/$report_data/g" Occlum.json
 
-    if [[ $FS_TYPE == "ramfs" ]]; then 
+    if [[ $FS_TYPE == "ramfs" ]]; then
         edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "ramfs"}]')" && \
         echo "${edit_json}" > Occlum.json
-    elif [[ $FS_TYPE == "hostfs" ]]; then 
+    elif [[ $FS_TYPE == "hostfs" ]]; then
         edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "hostfs"}]')" && \
         echo "${edit_json}" > Occlum.json
     fi
