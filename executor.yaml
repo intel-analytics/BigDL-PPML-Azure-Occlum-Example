@@ -29,6 +29,8 @@ spec:
       value: "1GB"
     - name: AZDCAP_DEBUG_LOG_LEVEL
       value: "fatal"
+    - name: FS_TYPE
+      value: "hostfs"
   volumes:
   - name: device-plugin
     hostPath:
