@@ -15,5 +15,7 @@ ${SPARK_HOME}/bin/spark-submit \
     --conf spark.kubernetes.driver.podTemplateFile=./driver.yaml \
     --conf spark.kubernetes.executor.podTemplateFile=./executor.yaml \
     --conf spark.kubernetes.sgx.log.level=off \
+    --conf spark.executorEnv.SGX_EXECUTOR_JVM_MEM_SIZE="512m" \
+    --conf spark.kubernetes.driverEnv.SGX_DRIVER_JVM_MEM_SIZE="512m" \
     local:/bin/jars/spark-azure-nytaxi-1.0-SNAPSHOT.jar
 

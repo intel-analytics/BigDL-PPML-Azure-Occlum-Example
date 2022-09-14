@@ -114,7 +114,8 @@ init_instance() {
         edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "ramfs"}]')" && \
         echo "${edit_json}" > Occlum.json
     elif [[ $FS_TYPE == "hostfs" ]]; then
-        edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "hostfs"}]')" && \
+        mkdir ./shuffle
+        edit_json="$(cat Occlum.json | jq '.mount+=[{"target": "/tmp","type": "hostfs","source":"./shuffle"}]')" && \
         echo "${edit_json}" > Occlum.json
     fi
 }
