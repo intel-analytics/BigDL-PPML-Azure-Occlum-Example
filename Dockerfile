@@ -67,6 +67,4 @@ ADD ./nytaxi/target/spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /r
 RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-2.1.0-SNAPSHOT/jars/
 ADD ./run_azure_nytaxi.sh /root/run_azure_nytaxi.sh
 
-RUN cd /opt && bash run_spark_on_occlum_glibc.sh init
-
 ENTRYPOINT [ "/opt/entrypoint.sh" ]

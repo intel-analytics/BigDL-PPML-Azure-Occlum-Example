@@ -24,3 +24,5 @@ sudo docker build \
     --build-arg AZURE_BLOB_SAS_TOKEN=$AZURE_BLOB_SAS_TOKEN \
     --build-arg AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC \
     -t intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT -f ./Dockerfile .
+
+bash occlum-build.sh
