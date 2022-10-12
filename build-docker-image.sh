@@ -30,4 +30,4 @@ sudo docker build \
     -t $image_name -f ./Dockerfile .
 
 
-bash occlum-build.sh -c $container_name -i $image_name -final_name $final_name
+bash occlum-build.sh -c $container_name -i $image_name -f $final_name
