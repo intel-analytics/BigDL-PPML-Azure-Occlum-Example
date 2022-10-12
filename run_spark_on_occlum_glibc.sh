@@ -56,6 +56,9 @@ init_instance() {
     echo "${new_json}" > Occlum.json
     echo "SGX_MEM_SIZE ${SGX_MEM_SIZE}"
 
+    bash add_conf.sh
+    cat Occlum.json
+
     if [[ -z "$META_SPACE" ]]; then
         echo "META_SPACE not set, using default value 256m"
         META_SPACE=256m
@@ -85,22 +88,6 @@ init_instance() {
         sed -i "s/SGX_KERNEL_HEAP/1GB/g" Occlum.json
     else
         sed -i "s/SGX_KERNEL_HEAP/${SGX_KERNEL_HEAP}/g" Occlum.json
-    fi
-
-    # check attestation setting
-    if [ -z "$ATTESTATION" ]; then
-        echo "[INFO] Attestation is disabled!"
-        ATTESTATION="false"
-    fi
-
-    if [[ $ATTESTATION == "true" ]]; then
-        if [[ $PCCS_URL == "" ]]; then
-           echo "[ERROR] Attestation set to true but NO PCCS"
-           exit 1
-        else
-           export ENABLE_SGX_DEBUG=false
-           sed -i "s#https://localhost:8081/sgx/certification/v3/#${PCCS_URL}#g" /etc/sgx_default_qcnl.conf
-        fi
     fi
 
     sed -i "s/\"ENABLE_SGX_DEBUG\"/$ENABLE_SGX_DEBUG/g" Occlum.json
@@ -177,12 +164,8 @@ build_spark() {
     cp -f /lib/x86_64-linux-gnu/libssl.so.1.1 initfs/$occlum_glibc/libssl.so.1.1
 
     # Build
-    if [[ $ATTESTATION == "true" ]]; then
-       occlum build --image-key ${INSTANCE_DIR}/data/image_key
-       build_initfs
-    else
-       occlum build
-    fi
+    occlum build
+
 }
 
 run_maa_example() {
@@ -191,25 +174,6 @@ run_maa_example() {
     
     echo -e "${BLUE}occlum run MAA example${NC}"
     occlum run /bin/busybox cat /root/token
-}
-
-build_initfs() {
-    cd /root/demos/remote_attestation/init_ra_flow/
-    bash build_content.sh build_init_ra
-    cd ${INSTANCE_DIR}
-    rm -rf initfs
-    jq ' .verify_mr_enclave = "off" |
-        .verify_mr_signer = "off" |
-        .verify_isv_prod_id = "off" |
-        .verify_isv_svn = "off" |
-        .verify_enclave_debuggable = "on" |
-        .sgx_mrs[0].debuggable = false ' /root/demos/remote_attestation/init_ra_flow/ra_config_template.json > ${INSTANCE_DIR}/dynamic_config.json
-    export INITRA_DIR=/root/demos/remote_attestation/init_ra_flow/init_ra
-    export DEP_LIBS_DIR=/root/demos/remote_attestation/init_ra_flow/dep_libs
-    export RATLS_DIR=/root/demos/ra_tls
-    copy_bom -f /root/demos/remote_attestation/init_ra_flow/init_ra_client.yaml --root initfs --include-dir /opt/occlum/etc/template
-
-    occlum build -f --image-key ${INSTANCE_DIR}/data/image_key
 }
 
 run_spark_pi() {

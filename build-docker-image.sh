@@ -11,6 +11,10 @@ pushd nytaxi
 mvn clean package 
 popd
 
+export container_name=bigdl-ppml-trusted-big-data-ml-scala-occlum-build
+export image_name=xiangyut/bigdl-ppml-azure-occlum:mount
+export final_name=xiangyut/bigdl-ppml-azure-occlum:final
+
 sudo docker build \
     --build-arg http_proxy=http://$HTTP_PROXY_HOST:$HTTP_PROXY_PORT \
     --build-arg https_proxy=http://$HTTPS_PROXY_HOST:$HTTPS_PROXY_PORT \
@@ -23,4 +27,7 @@ sudo docker build \
     --build-arg AZURE_BLOB_RELATIVE_PATH=$AZURE_BLOB_RELATIVE_PATH \
     --build-arg AZURE_BLOB_SAS_TOKEN=$AZURE_BLOB_SAS_TOKEN \
     --build-arg AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC \
-    -t intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT -f ./Dockerfile .
+    -t $image_name -f ./Dockerfile .
+
+
+bash occlum-build.sh -c $container_name -i $image_name -f $final_name

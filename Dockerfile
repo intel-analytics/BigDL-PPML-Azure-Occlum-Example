@@ -43,9 +43,13 @@ RUN wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/apache/hadoop/ha
     wget -P /opt/spark/jars/ https://repo1.maven.org/maven2/org/wildfly/openssl/wildfly-openssl/1.0.7.Final/wildfly-openssl-1.0.7.Final.jar
 
 RUN rm /opt/run_spark_on_occlum_glibc.sh && \
+    rm /opt/entrypoint.sh && \
     rm -rf /opt/spark-source
 
 ADD ./run_spark_on_occlum_glibc.sh /opt/run_spark_on_occlum_glibc.sh
+ADD ./entrypoint.sh /opt/entrypoint.sh
+ADD ./mount.sh /opt/mount.sh
+ADD ./add_conf.sh /opt/occlum_spark/add_conf.sh
 
 RUN cp /opt/run_spark_on_occlum_glibc.sh /root/run_spark_on_occlum_glibc.sh
 
@@ -55,7 +59,9 @@ RUN cd /opt/src/occlum/demos/remote_attestation/azure_attestation/maa_init/init 
 
 RUN chmod a+x /opt/entrypoint.sh && \
     chmod a+x /opt/run_spark_on_occlum_glibc.sh && \
-    chmod a+x /root/run_spark_on_occlum_glibc.sh
+    chmod a+x /root/run_spark_on_occlum_glibc.sh && \
+    chmod a+x /opt/mount.sh && \
+    chmod a+x /opt/occlum_spark/add_conf.sh
 
 ADD ./nytaxi/target/spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
 RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-2.1.0-SNAPSHOT/jars/
