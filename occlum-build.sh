@@ -7,15 +7,15 @@ do
     case $opt in
         c)
         export container_name=$OPTARG
-        echo "container_name: " + $container_name
+        echo "container_name:" $container_name
         ;;
         i)
         export image_name=$OPTARG
-        echo "image_name: " + $ image_name
+        echo "image_name:" $image_name
         ;;
         f)
         export final_name=$OPTARG
-        echo "final_name: " + $final_name
+        echo "final_name:" $final_name
         ;;
         ?)
         echo $OPTARG
@@ -23,7 +23,7 @@ do
         exit 1;;
     esac
 done
- Clean up old
+#Clean up old
 sudo docker rm -f $container_name
 
 # Run new command in container
