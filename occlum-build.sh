@@ -19,7 +19,7 @@ do
         ;;
         ?)
         echo $OPTARG
-        echo "未知参数"
+        echo "unknow parameter"
         exit 1;;
     esac
 done
