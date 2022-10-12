@@ -1,7 +1,29 @@
-# Clean up old container
+# default
 export container_name=bigdl-ppml-trusted-big-data-ml-scala-occlum-build
-export image_name=xiangyut/bigdl-ppml-azure-occlum:mount1
+export image_name=xiangyut/bigdl-ppml-azure-occlum:mount
 export final_name=xiangyut/bigdl-ppml-azure-occlum:final
+while getopts ":c:i:f:" opt
+do
+    case $opt in
+        c)
+        export container_name=$OPTARG
+        echo "container_name: " + $container_name
+        ;;
+        i)
+        export image_name=$OPTARG
+        echo "image_name: " + $ image_name
+        ;;
+        f)
+        export final_name=$OPTARG
+        echo "final_name: " + $final_name
+        ;;
+        ?)
+        echo $OPTARG
+        echo "未知参数"
+        exit 1;;
+    esac
+done
+ Clean up old
 sudo docker rm -f $container_name
 
 # Run new command in container
