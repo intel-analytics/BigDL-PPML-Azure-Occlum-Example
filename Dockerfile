@@ -1,4 +1,4 @@
-FROM intelanalytics/bigdl-ppml-trusted-big-data-ml-scala-occlum:2.1.0-SNAPSHOT as ppml
+FROM 10.239.45.10/arda/intelanalytics/bigdl-ppml-trusted-big-data-ml-scala-occlum:pr-5989 as ppml
 
 ARG HTTP_PROXY_HOST
 ARG HTTP_PROXY_PORT
@@ -19,6 +19,9 @@ ENV AZURE_BLOB_SAS_TOKEN=$AZURE_BLOB_SAS_TOKEN
 ENV AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC
 
 ENV AZDCAP_DEBUG_LOG_LEVEL=fatal
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git sudo cargo pkg-config libssl-dev openssl apt-utils
 
 RUN mkdir -p /opt/src && \
     cd /opt/src && \
