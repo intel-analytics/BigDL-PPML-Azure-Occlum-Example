@@ -21,7 +21,7 @@ ENV AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC
 ENV AZDCAP_DEBUG_LOG_LEVEL=fatal
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git sudo cargo pkg-config libssl-dev openssl apt-utils
+    apt-get install -y --no-install-recommends git sudo cargo pkg-config libssl-dev apt-utils
 
 RUN mkdir -p /opt/src && \
     cd /opt/src && \
