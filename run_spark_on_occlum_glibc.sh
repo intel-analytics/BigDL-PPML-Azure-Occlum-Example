@@ -112,6 +112,13 @@ build_spark() {
 
     copy_bom -f ${IMG_BOM} --root image --include-dir /opt/occlum/etc/template
     copy_bom -f ${INIT_BOM} --root initfs --include-dir /opt/occlum/etc/template
+
+    cp -rf ../init/target/release/init /opt/occlum_spark/initfs/bin/
+    cp /opt/occlum/glibc/lib/libnss_files.so.2 /opt/occlum_spark/initfs/opt/occlum/glibc/lib
+    cp /opt/occlum/glibc/lib/libnss_dns.so.2 /opt/occlum_spark/initfs/opt/occlum/glibc/lib
+    cp /opt/occlum/glibc/lib/libresolv.so.2 /opt/occlum_spark/initfs/opt/occlum/glibc/lib
+    cp -rf /etc/ssl/* /opt/occlum_spark/initfs/etc/ssl/
+    
     # Copy JVM and class file into Occlum instance and build
     mkdir -p image/usr/lib/jvm
     cp -r /usr/lib/jvm/java-8-openjdk-amd64 image/usr/lib/jvm
