@@ -7,9 +7,9 @@ export AZURE_BLOB_CONTAINER_NAME=nyctlc
 export AZURE_BLOB_RELATIVE_PATH=yellow
 export AZURE_BLOB_SAS_TOKEN=r
 
-pushd nytaxi
+cd ../nytaxi
 mvn clean package 
-popd
+cd ../docker
 
 export container_name=bigdl-ppml-trusted-big-data-ml-scala-occlum-build
 export image_name=intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
@@ -28,3 +28,5 @@ sudo docker build \
     --build-arg AZURE_BLOB_SAS_TOKEN=$AZURE_BLOB_SAS_TOKEN \
     --build-arg AZURE_SQL_AE_JDBC=$AZURE_SQL_AE_JDBC \
     -t $image_name -f ./Dockerfile .
+
+bash occlum-build.sh -c $container_name -i $image_name -f $final_name
