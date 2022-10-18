@@ -1,1 +1,0 @@
-docker push xiangyut/bigdl-ppml-azure-occlum:$1
