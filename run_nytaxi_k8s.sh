@@ -9,13 +9,12 @@ ${SPARK_HOME}/bin/spark-submit \
     --executor-cores 4 \
     --conf spark.executor.instances=1 \
     --conf spark.rpc.netty.dispatcher.numThreads=128 \
-    --conf spark.kubernetes.container.image=intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT \
+    --conf spark.kubernetes.container.image=intelanalytics/bigdl-ppml-azure-occlum:2.1.0 \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
     --conf spark.kubernetes.executor.deleteOnTermination=false \
     --conf spark.kubernetes.driver.podTemplateFile=./driver.yaml \
     --conf spark.kubernetes.executor.podTemplateFile=./executor.yaml \
     --conf spark.kubernetes.sgx.log.level=off \
-    --conf spark.executorEnv.SGX_EXECUTOR_JVM_MEM_SIZE="512m" \
-    --conf spark.kubernetes.driverEnv.SGX_DRIVER_JVM_MEM_SIZE="512m" \
+    --conf spark.executorEnv.SGX_EXECUTOR_JVM_MEM_SIZE="1g" \
+    --conf spark.kubernetes.driverEnv.SGX_DRIVER_JVM_MEM_SIZE="1g" \
     local:/bin/jars/spark-azure-nytaxi-1.0-SNAPSHOT.jar
-

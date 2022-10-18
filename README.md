@@ -26,7 +26,7 @@ Key points:
 Pull the image from [Dockerhub](https://hub.docker.com/r/intelanalytics/bigdl-ppml-azure-occlum).
 
 ```bash
-docker pull intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
+docker pull intelanalytics/bigdl-ppml-azure-occlum:2.1.0
 ```
 
 Or you can clone this repository and build image with `build-docker-image.sh`. Configure environment variables in `build-docker-image.sh`.
@@ -50,7 +50,7 @@ docker run --rm -it \
     --name=azure-ppml-example-with-occlum \
     --device=/dev/sgx/enclave \
     --device=/dev/sgx/provision \
-    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0 bash 
 
 cd /opt
 bash run_spark_on_occlum_glibc.sh pi
@@ -65,7 +65,7 @@ docker run --rm -it \
     --name=azure-ppml-example-with-occlum \
     --device=/dev/sgx/enclave \
     --device=/dev/sgx/provision \
-    intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT bash 
+    intelanalytics/bigdl-ppml-azure-occlum:2.1.0 bash 
 
 bash run_azure_nytaxi.sh
 ```
