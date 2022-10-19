@@ -16,7 +16,7 @@ spec:
       privileged: true
     env:
     - name: EXECUTOR_MEMORY
-      value: "512m"
+      value: "1GB"
     - name: NETTY_THREAD
       value: "32"
     - name: SGX_MEM_SIZE

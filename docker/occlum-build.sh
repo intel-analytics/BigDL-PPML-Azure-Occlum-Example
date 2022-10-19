@@ -1,7 +1,7 @@
 # default
 export container_name=bigdl-ppml-trusted-big-data-ml-scala-occlum-build
-export image_name=xiangyut/bigdl-ppml-azure-occlum:mount
-export final_name=xiangyut/bigdl-ppml-azure-occlum:final
+export image_name=intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT
+export final_name=intelanalytics/bigdl-ppml-azure-occlum:2.1.0
 while getopts ":c:i:f:" opt
 do
     case $opt in
