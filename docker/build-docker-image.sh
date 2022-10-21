@@ -10,6 +10,7 @@ export AZURE_BLOB_SAS_TOKEN=r
 cd ../nytaxi
 mvn clean package 
 cd ../docker
+cp ../nytaxi/target/spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar .
 
 export container_name=bigdl-ppml-trusted-big-data-ml-scala-occlum-build
 export image_name=intelanalytics/bigdl-ppml-azure-occlum:2.1.0-SNAPSHOT

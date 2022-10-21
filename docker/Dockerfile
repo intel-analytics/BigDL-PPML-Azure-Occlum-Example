@@ -63,7 +63,7 @@ RUN chmod a+x /opt/entrypoint.sh && \
     chmod a+x /opt/mount.sh && \
     chmod a+x /opt/occlum_spark/add_conf.sh
 
-ADD ../nytaxi/target/spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
+ADD ./spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
 RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-2.1.0-SNAPSHOT/jars/
 ADD ./run_azure_nytaxi.sh /root/run_azure_nytaxi.sh
 
