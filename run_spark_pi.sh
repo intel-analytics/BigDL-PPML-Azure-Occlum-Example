@@ -1,5 +1,5 @@
 #!/bin/bash
-
+IMAGE=intelanalytics/bigdl-ppml-azure-occlum:2.1.0
 ${SPARK_HOME}/bin/spark-submit \
     --master k8s://https://${kubernetes_master_url}:${k8s_apiserver_port} \
     --deploy-mode cluster \
@@ -7,7 +7,7 @@ ${SPARK_HOME}/bin/spark-submit \
     --class org.apache.spark.examples.SparkPi \
     --conf spark.executor.instances=1 \
     --conf spark.rpc.netty.dispatcher.numThreads=32 \
-    --conf spark.kubernetes.container.image=intelanalytics/bigdl-ppml-azure-occlum:2.1.0 \
+    --conf spark.kubernetes.container.image=${IMAGE} \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
     --conf spark.kubernetes.executor.deleteOnTermination=false \
     --conf spark.kubernetes.driver.podTemplateFile=./driver.yaml \
