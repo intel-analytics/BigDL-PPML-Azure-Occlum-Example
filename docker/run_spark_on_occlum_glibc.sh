@@ -177,16 +177,26 @@ run_maa_example() {
 }
 
 run_spark_pi() {
-    init_instance spark
-    build_spark
+    # init_instance spark
+    ##build_spark
     echo -e "${BLUE}occlum run spark Pi${NC}"
+
+    if [[ -z "$META_SPACE" ]]; then
+        echo "META_SPACE not set, using default value 256m"
+        META_SPACE=256m
+    else
+        echo "META_SPACE=$META_SPACE"
+    fi
+
+    cd /opt/occlum_spark
+    bash /opt/mount.sh
     occlum run /usr/lib/jvm/java-8-openjdk-amd64/bin/java \
                 -XX:-UseCompressedOops -XX:MaxMetaspaceSize=$META_SPACE \
                 -XX:ActiveProcessorCount=4 \
                 -Divy.home="/tmp/.ivy" \
                 -Dos.name="Linux" \
                 -cp "$SPARK_HOME/conf/:$SPARK_HOME/jars/*:/bin/jars/*" \
-                -Xmx10g org.apache.spark.deploy.SparkSubmit \
+                -Xmx512m org.apache.spark.deploy.SparkSubmit \
                 --jars $SPARK_HOME/examples/jars/spark-examples_2.12-3.1.2.jar,$SPARK_HOME/examples/jars/scopt_2.12-3.7.1.jar \
                 --class org.apache.spark.examples.SparkPi spark-internal
 }
