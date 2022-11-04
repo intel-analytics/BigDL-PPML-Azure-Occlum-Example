@@ -66,5 +66,12 @@ RUN chmod a+x /opt/entrypoint.sh && \
 ADD ../nytaxi/target/spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
 RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-2.1.0-SNAPSHOT/jars/
 ADD ./run_azure_nytaxi.sh /root/run_azure_nytaxi.sh
+ADD ./run_spark_pi.sh /root/run_spark_pi.sh
+ADD ./run_nytaxi_k8s.sh /root/run_nytaxi_k8s.sh
+ADD ./driver.yaml /root/driver.yaml
+ADD ./executor.yaml /root/executor.yaml
+
+# install azure cli
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
