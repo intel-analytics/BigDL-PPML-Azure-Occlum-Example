@@ -1,5 +1,6 @@
-FROM intelanalytics/bigdl-ppml-trusted-big-data-ml-scala-occlum:2.1.0-SNAPSHOT as ppml
+FROM intelanalytics/bigdl-ppml-trusted-big-data-ml-scala-occlum:2.1.0 as ppml
 
+ARG BIGDL_VERSION=2.1.0
 ARG HTTP_PROXY_HOST
 ARG HTTP_PROXY_PORT
 ARG HTTPS_PROXY_HOST
@@ -10,6 +11,7 @@ ARG AZURE_BLOB_RELATIVE_PATH
 ARG AZURE_BLOB_SAS_TOKEN
 ARG AZURE_SQL_AE_JDBC
 
+ENV BIGDL_VERSION=${BIGDL_VERSION}
 ENV HTTP_PROXY=http://$HTTP_PROXY_HOST:$HTTP_PROXY_PORT
 ENV HTTPS_PROXY=http://$HTTPS_PROXY_HOST:$HTTPS_PROXY_PORT
 ENV AZURE_BLOB_ACCOUNT_NAME=$AZURE_BLOB_ACCOUNT_NAME
@@ -63,8 +65,8 @@ RUN chmod a+x /opt/entrypoint.sh && \
     chmod a+x /opt/mount.sh && \
     chmod a+x /opt/occlum_spark/add_conf.sh
 
-ADD ../nytaxi/target/spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
-RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-2.1.0-SNAPSHOT/jars/
+ADD ./spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
+RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-${BIGDL_VERSION}/jars/
 ADD ./run_azure_nytaxi.sh /root/run_azure_nytaxi.sh
 ADD ./run_spark_pi.sh /root/run_spark_pi.sh
 ADD ./run_nytaxi_k8s.sh /root/run_nytaxi_k8s.sh
