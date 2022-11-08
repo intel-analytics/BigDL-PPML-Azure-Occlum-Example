@@ -163,7 +163,7 @@ az storage fs directory upload -f myFS --account-name myDataLakeAccount -s xxx/d
 
 #### Running
 Configure variable in run_tpch.sh to set Spark home, KeyVault, Azure Storage information, etc.
-Make sure you set the INPUT_DIR and OUTPUT_DIR in `TpchQuery` class before compiling to point to the
+Make sure you set the INPUT_DIR and OUTPUT_DIR to point to the
 location of the input data and where the output should be saved.
 The example script to run a query is like:
 
