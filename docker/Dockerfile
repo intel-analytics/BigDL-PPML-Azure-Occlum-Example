@@ -68,5 +68,8 @@ RUN chmod a+x /opt/entrypoint.sh && \
 ADD ./spark-azure-nytaxi-1.0-SNAPSHOT-jar-with-dependencies.jar /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar
 RUN cp /root/spark-azure-nytaxi-1.0-SNAPSHOT.jar /opt/bigdl-${BIGDL_VERSION}/jars/
 ADD ./run_azure_nytaxi.sh /root/run_azure_nytaxi.sh
+ADD ./run_tpch.sh /root/run_tpch.sh
+ADD ./driver.yaml /root/driver.yaml
+ADD ./executor.yaml /root/executor.yaml
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
