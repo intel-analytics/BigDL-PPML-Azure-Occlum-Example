@@ -89,6 +89,159 @@ Configure environment variables in `run_nytaxi_k8s.sh`, `driver.yaml` and `execu
 bash run_nytaxi_k8s.sh
 ```
 
+### Run TPC-H example
+TPC-H queries are implemented using Spark DataFrames API running with BigDL PPML.
+
+#### Generating tables
+
+Go to [TPC Download](https://www.tpc.org/tpc_documents_current_versions/current_specifications5.asp) site, choose `TPC-H` source code, then download the TPC-H toolkits.
+After you download the TPC-h tools zip and uncompressed the zip file. Go to `dbgen` directory and create a makefile based on `makefile.suite`, and run `make`.
+
+This should generate an executable called `dbgen`.
+
+```
+./dbgen -h
+```
+
+`dbgen` gives you various options for generating the tables. The simplest case is running:
+
+```
+./dbgen
+```
+which generates tables with extension `.tbl` with scale 1 (default) for a total of rougly 1GB size across all tables. For different size tables you can use the `-s` option:
+```
+./dbgen -s 10
+```
+will generate roughly 10GB of input data.
+
+#### Generate primary key and data key
+Generate primary key and data key, then save to file system.
+
+The example code for generating the primary key and data key is like below:
+```
+BIGDL_VERSION=2.1.0
+java -cp /opt/bigdl-$BIGDL_VERSION/jars/*:/opt/spark/conf/:/opt/spark/jars/* \
+   -Xmx10g \
+   com.intel.analytics.bigdl.ppml.examples.GenerateKeys \
+   --kmsType AzureKeyManagementService \
+   --vaultName xxx \
+   --primaryKeyPath xxx/keys/primaryKey \
+   --dataKeyPath xxx/keys/dataKey
+```
+After generate keys on local fs, you may upload keys to Azure Data Lake store for running TPC-H with cluster mode.
+
+The example script is like below:
+
+```bash
+az storage fs directory upload -f myFS --account-name myDataLakeAccount -s xxx/keys -d myDirectory/keys --recursive
+```
+
+#### Encrypt Data
+Encrypt data with specified BigDL `AzureKeyManagementService`
+
+The example code of encrypting data is like below:
+```
+BIGDL_VERSION=2.1.0
+java -cp /opt/bigdl-$BIGDL_VERSION/jars/*:/opt/spark/conf/:/opt/spark/jars/* \
+   -Xmx10g \
+   com.intel.analytics.bigdl.ppml.examples.tpch.EncryptFiles \
+   --kmsType AzureKeyManagementService \
+   --vaultName xxx \
+   --primaryKeyPath xxx/keys/primaryKey \
+   --dataKeyPath xxx/keys/dataKey \
+   --inputPath xxx/dbgen \
+   --outputPath xxx/dbgen-encrypted
+```
+
+After encryption, you may upload encrypted data to Azure Data Lake store.
+
+The example script is like below:
+
+```bash
+az storage fs directory upload -f myFS --account-name myDataLakeAccount -s xxx/dbgen-encrypted -d myDirectory --recursive
+```
+
+#### Running
+Configure variable in run_tpch.sh to set Spark home, KeyVault, Azure Storage information, etc.
+Make sure you set the INPUT_DIR and OUTPUT_DIR to point to the
+location of the input data and where the output should be saved.
+The example script to run a query is like:
+
+```
+BIGDL_VERSION=2.1.0
+export SPARK_HOME=
+SPARK_EXTRA_JAR_PATH=/bin/jars/bigdl-ppml-spark_3.1.2-${BIGDL_VERSION}.jar
+SPARK_JOB_MAIN_CLASS=com.intel.analytics.bigdl.ppml.examples.tpch.TpchQuery
+IMAGE=myContainerRegistry.azurecr.io/intel_corporation/bigdl-ppml-azure-occlum:latest
+
+KEYVAULT_NAME=
+DATA_LAKE_NAME=
+DATA_LAKE_ACCESS_KEY=
+FS_PATH=abfs://xxx@xxx.dfs.core.windows.net
+INPUT_DIR=$FS_PATH/dbgen/dbgen-encrypted-1g
+ENCRYPT_KEYS_PATH=$FS_PATH/keys
+OUTPUT_DIR=$FS_PATH/dbgen/out-dbgen-1g
+
+export kubernetes_master_url=
+
+${SPARK_HOME}/bin/spark-submit \
+    --master k8s://https://${kubernetes_master_url} \
+    --deploy-mode cluster \
+    --name spark-tpch \
+    --conf spark.rpc.netty.dispatcher.numThreads=32 \
+    --conf spark.kubernetes.container.image=${IMAGE} \
+    --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
+    --conf spark.kubernetes.executor.deleteOnTermination=false \
+    --conf spark.kubernetes.driver.podTemplateFile=./driver.yaml \
+    --conf spark.kubernetes.executor.podTemplateFile=./executor.yaml \
+    --conf spark.kubernetes.file.upload.path=file:///tmp \
+    --conf spark.kubernetes.sgx.log.level=error \
+    --conf spark.kubernetes.driverEnv.DRIVER_MEMORY=2g \
+    --conf spark.kubernetes.driverEnv.SGX_MEM_SIZE="25GB" \
+    --conf spark.kubernetes.driverEnv.META_SPACE=1024M \
+    --conf spark.kubernetes.driverEnv.SGX_HEAP="1GB" \
+    --conf spark.kubernetes.driverEnv.SGX_KERNEL_HEAP="2GB" \
+    --conf spark.kubernetes.driverEnv.SGX_THREAD="1024" \
+    --conf spark.kubernetes.driverEnv.FS_TYPE="hostfs" \
+    --conf spark.executorEnv.SGX_MEM_SIZE="16GB" \
+    --conf spark.executorEnv.SGX_KERNEL_HEAP="2GB" \
+    --conf spark.executorEnv.SGX_HEAP="1GB" \
+    --conf spark.executorEnv.SGX_THREAD="1024" \
+    --conf spark.executorEnv.SGX_EXECUTOR_JVM_MEM_SIZE="7G" \
+    --conf spark.kubernetes.driverEnv.SGX_DRIVER_JVM_MEM_SIZE="1G" \
+    --conf spark.executorEnv.FS_TYPE="hostfs" \
+    --num-executors 1  \
+    --executor-cores 4 \
+    --executor-memory 3g \
+    --driver-cores 4 \
+    --conf spark.cores.max=4 \
+    --conf spark.driver.defaultJavaOptions="-Dlog4j.configuration=/opt/spark/conf/log4j2.xml" \
+    --conf spark.executor.defaultJavaOptions="-Dlog4j.configuration=/opt/spark/conf/log4j2.xml" \
+    --conf spark.network.timeout=10000000 \
+    --conf spark.executor.heartbeatInterval=10000000 \
+    --conf spark.python.use.daemon=false \
+    --conf spark.python.worker.reuse=false \
+    --conf spark.sql.auto.repartition=true \
+    --conf spark.default.parallelism=400 \
+    --conf spark.sql.shuffle.partitions=400 \
+    --conf spark.hadoop.fs.azure.account.auth.type.${DATA_LAKE_NAME}.dfs.core.windows.net=SharedKey \
+    --conf spark.hadoop.fs.azure.account.key.${DATA_LAKE_NAME}.dfs.core.windows.net=${DATA_LAKE_ACCESS_KEY} \
+    --conf spark.hadoop.fs.azure.enable.append.support=true \
+    --conf spark.bigdl.kms.type=AzureKeyManagementService \
+    --conf spark.bigdl.kms.azure.vault=$KEYVAULT_NAME \
+    --conf spark.bigdl.kms.key.primary=$ENCRYPT_KEYS_PATH/primaryKey \
+    --conf spark.bigdl.kms.key.data=$ENCRYPT_KEYS_PATH/dataKey \
+    --class $SPARK_JOB_MAIN_CLASS \
+    --verbose \
+    local:$SPARK_EXTRA_JAR_PATH \
+    $INPUT_DIR \
+    $OUTPUT_DIR \
+    AES/CBC/PKCS5Padding \
+    plain_text [QUERY]
+```
+INPUT_DIR is the TPC-H's data dir.
+OUTPUT_DIR is the dir to write the query result.
+The optional parameter [QUERY] is the number of the query to run e.g 1, 2, ..., 22
 ## Known issues
 
 1. If you meet the following error when running the docker image:
